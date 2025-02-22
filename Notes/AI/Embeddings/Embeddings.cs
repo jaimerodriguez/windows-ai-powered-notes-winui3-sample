@@ -49,13 +49,14 @@ namespace Notes.AI.Embeddings
             try
             {
 
-                _inferenceSession = new InferenceSession($@"{modelRoot}\model.onnx", sessionOptions);
+                _inferenceSession = new InferenceSession($@"{modelRoot}\all-MiniLM-L6-v2.onnx", sessionOptions);
 
                 ModelLoaded?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception e)
-            {
+            {               
                 Debug.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -63,7 +64,14 @@ namespace Notes.AI.Embeddings
         {
             if (!IsModelReady)
             {
-                InitModel();
+                try
+                {
+                    InitModel();
+                }
+                catch (Exception ex)
+                {
+                    return Array.Empty<float[]>();
+                }
             }
 
             sentences = sentences.Select(s => MyRegex().Replace(s, "")).ToArray();

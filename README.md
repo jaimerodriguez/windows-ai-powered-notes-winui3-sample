@@ -31,7 +31,7 @@ The model can be downloaded from the following link:
 
 This is model we use for semantic search. The two files you will need are `model.onnx` and `vocab.txt`. Create a new folder under `onnx-models` called `embedding` and place the files there. 
 
-## Downloading Sliero VAD
+## Downloading Silero VAD
 The Sliero Voice Activity Detection model can be downloaded from the following link:
 - [https://github.com/snakers4/silero-vad ](https://github.com/snakers4/silero-vad/tree/a9d2b591dea11451d23aa4b480eff8e55dbd9d99/files)
 

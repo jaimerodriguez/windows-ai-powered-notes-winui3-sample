@@ -169,9 +169,11 @@ namespace Notes.Controls
             transcriptLoadingProgressRing.IsActive = true;
             _ = Task.Run(async () =>
             {
-                while (AttachmentVM.IsProcessing)
+                int retries = 10; 
+                while (AttachmentVM.IsProcessing && retries > 0 )
                 {
                     Thread.Sleep(500);
+                    retries--; 
                 }
                 StorageFile transcriptFile = await (await Utils.GetAttachmentsTranscriptsFolderAsync()).GetFileAsync(AttachmentVM.Attachment.FilenameForText);
                 string rawTranscription = File.ReadAllText(transcriptFile.Path);

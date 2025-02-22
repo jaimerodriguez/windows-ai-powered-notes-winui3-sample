@@ -115,24 +115,32 @@ namespace Notes
                 });
 
                 var textToSave = string.Join("\n", transcribedChunks.Select(t => $@"<|{t.Start:0.00}|>{t.Text}<|{t.End:0.00}|>"));
+                
+                if (textToSave == string.Empty )
+                {
+                    textToSave = "Transcription failed"; 
+                }
 
                 var filename = await SaveTextToFileAsync(textToSave, file.DisplayName + ".txt");
                 attachment.FilenameForText = filename;
 
                 var textToIndex = string.Join(" ", transcribedChunks.Select(t => t.Text));
 
-                await SemanticIndex.Instance.AddOrReplaceContent(textToIndex, attachment.Id, "attachment", (o, p) =>
+                if (textToIndex != string.Empty)
                 {
-                    if (AttachmentProcessed != null)
+                    await SemanticIndex.Instance.AddOrReplaceContent(textToIndex, attachment.Id, "attachment", (o, p) =>
                     {
-                        AttachmentProcessed.Invoke(null, new AttachmentProcessedEventArgs
+                        if (AttachmentProcessed != null)
                         {
-                            AttachmentId = attachment.Id,
-                            Progress = 0.5f + p / 2,
-                            ProcessingStep = "Indexing audio transcript"
-                        });
-                    }
-                });
+                            AttachmentProcessed.Invoke(null, new AttachmentProcessedEventArgs
+                            {
+                                AttachmentId = attachment.Id,
+                                Progress = 0.5f + p / 2,
+                                ProcessingStep = "Indexing audio transcript"
+                            });
+                        }
+                    });
+                }
                 attachment.IsProcessed = true;
                 if (AttachmentProcessed != null)
                 {
